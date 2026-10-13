@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SPA Student Portal — Prototype</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+<!-- Shared login -->
+<div id="login-view" class="min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+    <div class="flex items-center gap-3 mb-4">
+      <img src="../SPA_logo.jpg" alt="SPA logo" class="w-12 h-12 object-contain rounded" onerror="this.style.display='none'" />
+      <div>
+        <h1 class="text-xl font-bold">San Pascual Academy</h1>
+        <p class="text-sm text-gray-500">Student Portal — Prototype (no backend)</p>
+      </div>
+    </div>
+    <label class="text-sm font-semibold">Username</label>
+    <input id="login-user" value="Enquig.john" class="w-full border rounded px-3 py-2 mt-1 mb-3" />
+    <label class="text-sm font-semibold">Password</label>
+    <input type="password" value="2026-0001" class="w-full border rounded px-3 py-2 mt-1 mb-4" />
+    <p class="text-xs text-gray-500 mb-3">Prototype accepts anything — pick a role to preview its dashboard:</p>
+    <div class="grid grid-cols-3 gap-2">
+      <button onclick="login('admin')" class="bg-purple-600 text-white py-2 rounded">Admin</button>
+      <button onclick="login('faculty')" class="bg-blue-600 text-white py-2 rounded">Faculty</button>
+      <button onclick="login('student')" class="bg-green-600 text-white py-2 rounded">Student</button>
+    </div>
+    <p class="text-xs text-gray-400 mt-4">Real rules (Sanctum, policies, validations) apply in Phase 1+ implementation, not here.</p>
+  </div>
+</div>
+
+<!-- App shell -->
+<div id="app-view" class="hidden min-h-screen flex">
+  <aside class="w-56 bg-white shadow p-4 hidden md:block">
+    <div class="flex items-center gap-2 mb-4">
+      <img src="../SPA_logo.jpg" alt="SPA" class="w-8 h-8 object-contain rounded" onerror="this.style.display='none'" />
+      <strong>SPA Portal</strong>
+    </div>
+    <div id="nav" class="space-y-1"></div>
+    <button onclick="logout()" class="mt-6 text-sm text-red-600 underline">Logout</button>
+  </aside>
+  <div class="flex-1">
+    <header class="bg-white shadow px-4 py-3 flex justify-between items-center">
+      <div class="md:hidden flex gap-2" id="nav-mobile"></div>
+      <span id="year-label" class="text-sm text-gray-500"></span>
+      <span id="user-label" class="text-sm font-semibold"></span>
+    </header>
+    <main id="page" class="p-4 md:p-6 max-w-6xl mx-auto"></main>
+  </div>
+</div>
+
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2 rounded shadow"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+  // Mirror sidebar nav into mobile header for small screens
+  const obs = new MutationObserver(() => {
+    const nav = document.getElementById("nav");
+    const mob = document.getElementById("nav-mobile");
+    if (nav && mob && !mob.innerHTML) {
+      mob.innerHTML = `<select onchange="go(this.value)" class="border rounded px-2 py-1 text-sm">` +
+        [...nav.querySelectorAll("button")].map((b, i) =>
+          `<option value="${["overview","users","setup","imports","schedules","grades","announcements","audit","classlist","schedule","profile"][i] || "overview"}">${b.textContent}</option>`).join("") + `</select>`;
+    }
+  });
+  obs.observe(document.getElementById("nav"), { childList: true });
+</script>
+</body>
+</html>
