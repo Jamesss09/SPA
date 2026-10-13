@@ -1,4 +1,4 @@
-# Phase 1 — Foundation (done, with one follow-up)
+# Phase 1 — Foundation (complete)
 
 ## What was built
 - Git repo init (`main`), `.gitignore`
@@ -13,18 +13,13 @@
 - `prototype/` — untouched clickable mock.
 
 ## Run
-- Backend (sqlite dev): `cd backend && php artisan serve` → http://localhost:8000
-- Frontend: `cd frontend && cp .env.example .env && npm run dev` → http://localhost:5173
+- Backend (MySQL `spa_portal` on 127.0.0.1:3307): `cd backend && php artisan serve` → http://localhost:8000
+- Frontend: `cd frontend && npm run dev` → http://localhost:5173 (local `.env` already created from example)
 - Seed admin: username `admin` / password `password`
-- Fresh reset: `cd backend && php artisan migrate:fresh --seed --force`
+- Fresh reset: `cd backend && php artisan migrate:fresh --seed --force` (11/11 Ran on MySQL, verified)
 
-## Follow-up before Phase 2
-MySQL is installed but not yet wired: service `MySQL80` listens on **port 3307**
-(not 3306) and `root` requires a password (`ERROR 1045` with empty password).
-To cut over from sqlite:
-1. Get/create MySQL credentials with `CREATE DATABASE spa_portal`.
-2. Set in `backend/.env`: `DB_CONNECTION=mysql`, `DB_HOST=127.0.0.1`, `DB_PORT=3307`,
-   `DB_DATABASE=spa_portal`, `DB_USERNAME=...`, `DB_PASSWORD=...`.
-3. Re-run `php artisan migrate:fresh --seed --force` and confirm 11/11 Ran.
+## MySQL cutover (done)
+Wired to service `MySQL80` on port 3307, database `spa_portal`.
+Credentials live only in gitignored `backend/.env` — never committed.
 
-Phase 2 (Auth) starts after this cutover + Sanctum stateful/CORS config.
+Phase 2 (Auth) is next: Sanctum stateful/CORS config + login/logout/me endpoints.
