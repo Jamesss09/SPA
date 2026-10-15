@@ -56,3 +56,24 @@ Admin-only (`auth:sanctum` + `active` + `admin`; faculty/student → 403, guest 
   per-record policies deferred to Phase 4 where faculty ownership checks appear.
 - Frontend: `/admin/*` pages (years, periods, levels, sections, rooms, subjects, users)
   with real counts on the overview; 403/422 surfaced inline.
+
+## Phase 4 — Enrollment & assignments (complete)
+
+- Import: `POST /enrollments/import/preview` (multipart file + section_id, no writes)
+  → rows classified ok/matched/duplicate/error + summary; `POST .../commit`
+  (section_id + rows) re-validates and writes transactionally + `import_batches` row.
+  Columns: last_name*, first_name*, middle_name, birth_date Y-m-d, contact_number,
+  student_number (optional). CSV native; XLSX via phpoffice/phpspreadsheet
+  (needs php `ext-gd` — enabled in `C:\xampp\php\php.ini`).
+- Accounts: username `Surname.lowercased-firstname` (`Enquig.john`), numeric suffix
+  on collision; blank IDs generated `{startYear}-0001…`; initial password = student
+  number (hashed), `must_change_password=true`. Existing IDs match (no dup accounts);
+  same-year other-section enrollment → error row for admin decision. No password lists.
+- Scope: admin school-wide; faculty only taught/advised sections
+  (`SectionAccess::canManage` — the record-level pattern for later phases).
+- Teaching assignments: admin CRUD by faculty user (profile auto-created `EMP-{id}`,
+  year derived from section); faculty index auto-scoped to own; class lists via
+  assignment/section students endpoints. Advisers via section PATCH (1/section).
+- Frontend: `/admin/imports` (upload→preview→commit), `/admin/assignments`,
+  `/faculty/classes` (assignments + class lists + scoped import).
+- Env note: `composer dump-autoload` with scripts hangs here — use `--no-scripts`.

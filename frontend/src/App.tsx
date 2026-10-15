@@ -10,6 +10,9 @@ import StudentDashboard from "./pages/StudentDashboard";
 import { SchoolYears, GradingPeriods, GradeLevels, Rooms, Subjects } from "./pages/admin/SetupPages";
 import Sections from "./pages/admin/Sections";
 import Users from "./pages/admin/Users";
+import { AdminImports } from "./pages/admin/Imports";
+import Assignments from "./pages/admin/Assignments";
+import Classes from "./pages/faculty/Classes";
 
 const admin = (el: React.ReactNode) => <ProtectedRoute role="admin">{el}</ProtectedRoute>;
 
@@ -29,7 +32,10 @@ export default function App() {
             <Route path="/admin/rooms" element={admin(<Rooms />)} />
             <Route path="/admin/subjects" element={admin(<Subjects />)} />
             <Route path="/admin/users" element={admin(<Users />)} />
+            <Route path="/admin/imports" element={admin(<AdminImports />)} />
+            <Route path="/admin/assignments" element={admin(<Assignments />)} />
             <Route path="/faculty" element={<ProtectedRoute role="faculty"><FacultyDashboard /></ProtectedRoute>} />
+            <Route path="/faculty/classes" element={<ProtectedRoute role="faculty"><Classes /></ProtectedRoute>} />
             <Route path="/student" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

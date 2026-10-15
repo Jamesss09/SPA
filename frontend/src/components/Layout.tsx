@@ -11,11 +11,12 @@ const NAV: Record<Role, [string, string][]> = {
     ["/admin/rooms", "Rooms"],
     ["/admin/subjects", "Subjects"],
     ["/admin/users", "Users"],
+    ["/admin/imports", "Imports"],
+    ["/admin/assignments", "Assignments"],
   ],
   faculty: [
-    ["/faculty", "My classes"],
-    ["/faculty?s=grades", "Grades"],
-    ["/faculty?s=schedules", "Schedules"],
+    ["/faculty", "Overview"],
+    ["/faculty/classes", "My classes"],
   ],
   student: [
     ["/student", "Overview"],

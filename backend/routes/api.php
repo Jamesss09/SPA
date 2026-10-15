@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\GradeLevelController;
 use App\Http\Controllers\GradingPeriodController;
 use App\Http\Controllers\AdminUserController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TeachingAssignmentController;
 use Illuminate\Support\Facades\Route;
 
 // Phase 2 — Sanctum SPA cookie-session auth. These routes need the `web`
@@ -32,4 +34,20 @@ Route::middleware(['web', 'auth:sanctum', 'active', 'admin'])->group(function ()
     Route::apiResource('subjects', SubjectController::class);
     Route::apiResource('users', AdminUserController::class)->except(['destroy']);
     Route::post('/users/{user}/reset-password', [AdminUserController::class, 'resetPassword']);
+});
+
+// Phase 4 — enrollment import (admin school-wide; faculty own sections only,
+// enforced per-section in the controller) + teaching assignments.
+Route::middleware(['web', 'auth:sanctum', 'active'])->group(function () {
+    Route::post('/enrollments/import/preview', [ImportController::class, 'preview']);
+    Route::post('/enrollments/import/commit', [ImportController::class, 'commit']);
+    Route::get('/teaching-assignments', [TeachingAssignmentController::class, 'index']);
+    Route::get('/teaching-assignments/{teaching_assignment}/students', [TeachingAssignmentController::class, 'students']);
+    Route::get('/sections/{section}/students', [SectionController::class, 'students']);
+});
+Route::middleware(['web', 'auth:sanctum', 'active', 'admin'])->group(function () {
+    Route::post('/teaching-assignments', [TeachingAssignmentController::class, 'store']);
+    Route::get('/teaching-assignments/{teaching_assignment}', [TeachingAssignmentController::class, 'show']);
+    Route::patch('/teaching-assignments/{teaching_assignment}', [TeachingAssignmentController::class, 'update']);
+    Route::delete('/teaching-assignments/{teaching_assignment}', [TeachingAssignmentController::class, 'destroy']);
 });

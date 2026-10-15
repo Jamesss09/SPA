@@ -18,9 +18,14 @@ Current: Phase 1 complete, Phase 2 next.
     full year (year→Q1-4→room→subject→faculty→section+adviser, dup→422,
     faculty→403), `npm run build` passes. Single-active-year enforced in code;
     section names unique per year+level (app-level); adviser = active faculty.
-- [ ] Phase 4 — Enrollment & assignments
+- [x] Phase 4 — Enrollment & assignments
   - Student import, validation, auto accounts, section enrollment, advisers, teaching assignments.
-  - Criteria: import preview works, duplicates detected, correct account/enrollment.
+  - Done: preview/commit import (CSV+XLSX), 5 ImportTest pass (classification,
+    account creation, `Enquig.john`+suffix rule, faculty scope, assignment CRUD),
+    HTTP E2E built a full year+import (preview 3/0/1/1, commit batch, faculty 403
+    elsewhere, student login via ID), `npm run build` passes. Username =
+    surname.lowercased-firstname; blank IDs generated `{year}-0001…`; faculty
+    scoped to taught/advised sections; advisers via section PATCH.
 - [ ] Phase 5 — Schedule workflow
   - Draft proposals, overlap checks, approval/rejection, versioning, student timetable.
   - Criteria: unapproved never replaces active approved timetable.

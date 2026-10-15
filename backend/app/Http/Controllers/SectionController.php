@@ -6,6 +6,7 @@ use App\Http\Requests\SectionRequest;
 use App\Models\Enrollment;
 use App\Models\Section;
 use App\Models\TeachingAssignment;
+use App\Services\SectionAccess;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -46,5 +47,21 @@ class SectionController extends Controller
         }
         $section->delete();
         return response()->json(['message' => 'Deleted.']);
+    }
+
+    // Class list for a section. Admin: all; faculty: assigned sections only.
+    public function students(Request $request, Section $section): JsonResponse
+    {
+        if (! SectionAccess::canManage($request->user(), $section)) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+        $rows = $section->enrollments()->with('student.user')->get()->map(fn ($e) => [
+            'enrollment_id' => $e->id,
+            'name' => $e->student->user->name,
+            'username' => $e->student->user->username,
+            'student_number' => $e->student->student_number,
+            'status' => $e->status,
+        ]);
+        return response()->json($rows);
     }
 }

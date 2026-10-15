@@ -14,4 +14,5 @@ class Section extends Model
     public function adviser(): BelongsTo { return $this->belongsTo(User::class, 'adviser_faculty_id'); }
     public function room(): BelongsTo { return $this->belongsTo(Room::class); }
     public function enrollments(): HasMany { return $this->hasMany(Enrollment::class); }
+    public function teachingAssignments(): HasMany { return $this->hasMany(TeachingAssignment::class); }
 }
