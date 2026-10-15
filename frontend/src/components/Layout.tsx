@@ -38,7 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <button
-          onClick={() => { logout(); nav("/login"); }}
+          onClick={() => { void logout().then(() => nav("/login")); }}
           className="mt-6 text-sm text-red-600 underline"
         >
           Logout ({user.name})

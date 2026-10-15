@@ -23,3 +23,21 @@ Wired to service `MySQL80` on port 3307, database `spa_portal`.
 Credentials live only in gitignored `backend/.env` — never committed.
 
 Phase 2 (Auth) is next: Sanctum stateful/CORS config + login/logout/me endpoints.
+
+## Phase 2 — Authentication (complete)
+
+Endpoints (`backend/routes/api.php`, all under `web` middleware for session+CSRF):
+- `POST /api/login` (throttle `login`: 5/min per username+IP) → `{user:{id,name,username,role,status,must_change_password}}`; deactivated → 403 + session cleared.
+- `POST /api/logout` (`auth:sanctum`), `GET /api/me` (`auth:sanctum` + `active`), `POST /api/password/change` (clears `must_change_password`).
+- Guards: `EnsureActive` (alias `active`), `EnsureRole` (alias `role:...`, for later phases).
+
+Env keys (values stay in gitignored `backend/.env`, never committed):
+- `SANCTUM_STATEFUL_DOMAINS=localhost:5173`, `FRONTEND_URL=http://localhost:5173`
+- `SESSION_DOMAIN=null` (correct for localhost: cookies ignore ports),
+  `SESSION_SECURE_COOKIE=false` local / `true` prod, `SESSION_SAME_SITE=lax`.
+- CORS (`backend/config/cors.php`): paths `api/*` + `sanctum/csrf-cookie`, explicit origin, `supports_credentials=true`.
+
+Frontend: `AuthContext` does csrf-cookie → login → me, restores session on boot;
+`Login` is a real form (401/403/422/429 errors); `ProtectedRoute` honors loading
+and `must_change_password` (`/change-password` page); `Layout` logout awaits API.
+Password-reset email deferred to Phase 7.

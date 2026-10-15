@@ -1,19 +1,63 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { api, csrf, fetchMe } from "../lib/api";
 
 export type Role = "admin" | "faculty" | "student";
-export interface SessionUser { name: string; role: Role }
+export interface SessionUser {
+  id: number;
+  name: string;
+  username: string;
+  role: Role;
+  status: string;
+  must_change_password: boolean;
+}
 
-const AuthCtx = createContext<{
+interface AuthCtxValue {
   user: SessionUser | null;
-  login: (u: SessionUser) => void;
-  logout: () => void;
-} | null>(null);
+  loading: boolean;
+  login: (username: string, password: string) => Promise<SessionUser>;
+  logout: () => Promise<void>;
+  refresh: () => Promise<void>;
+}
+
+const AuthCtx = createContext<AuthCtxValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Prototype session only — Phase 2 wires this to Laravel Sanctum GET /me.
   const [user, setUser] = useState<SessionUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    try {
+      const data = await fetchMe();
+      setUser(data.user);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refresh(); // restore session on boot (cookie may already exist)
+  }, [refresh]);
+
+  const login = useCallback(async (username: string, password: string) => {
+    await csrf();
+    await api.post("/login", { username, password });
+    const data = await fetchMe();
+    setUser(data.user);
+    return data.user as SessionUser;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await api.post("/logout");
+    } finally {
+      setUser(null);
+    }
+  }, []);
+
   return (
-    <AuthCtx.Provider value={{ user, login: setUser, logout: () => setUser(null) }}>
+    <AuthCtx.Provider value={{ user, loading, login, logout, refresh }}>
       {children}
     </AuthCtx.Provider>
   );
