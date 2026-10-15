@@ -11,9 +11,13 @@ Current: Phase 1 complete, Phase 2 next.
     throttle 5/min, password-change flag), E2E over HTTP+MySQL
     (csrf 204 → login 200 → me 200 → logout 200 → me 401, ACAO localhost:5173),
     `npm run build` passes. Reset-email deferred to Phase 7.
-- [ ] Phase 3 — Admin setup
+- [x] Phase 3 — Admin setup
   - School years, grading periods, grade levels, sections, rooms, subjects, user management.
-  - Criteria: admin prepares school year via UI, no manual DB edits.
+  - Done: IsAdmin gate, FormRequests, 7 AdminSetupTest pass (CRUD, 422 dup/FK,
+    409 delete-blocks, 403/401 gates, deactivate→login-403), HTTP E2E built a
+    full year (year→Q1-4→room→subject→faculty→section+adviser, dup→422,
+    faculty→403), `npm run build` passes. Single-active-year enforced in code;
+    section names unique per year+level (app-level); adviser = active faculty.
 - [ ] Phase 4 — Enrollment & assignments
   - Student import, validation, auto accounts, section enrollment, advisers, teaching assignments.
   - Criteria: import preview works, duplicates detected, correct account/enrollment.

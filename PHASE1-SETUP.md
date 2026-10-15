@@ -41,3 +41,18 @@ Frontend: `AuthContext` does csrf-cookie → login → me, restores session on b
 `Login` is a real form (401/403/422/429 errors); `ProtectedRoute` honors loading
 and `must_change_password` (`/change-password` page); `Layout` logout awaits API.
 Password-reset email deferred to Phase 7.
+
+## Phase 3 — Admin setup (complete)
+
+Admin-only (`auth:sanctum` + `active` + `admin`; faculty/student → 403, guest → 401):
+- CRUD: `/api/school-years`, `/api/grading-periods` (`?school_year_id=`),
+  `/api/grade-levels`, `/api/rooms`, `/api/sections` (`?school_year_id=`, `?grade_level_id=`),
+  `/api/subjects`, `/api/users` (`?role=`, `?status=`, `?search=`, paginated).
+- Users: create admin|faculty only (students via Phase 4 import), PATCH role/status,
+  `POST /users/{id}/reset-password` (temporary PW + force-change), deactivate via status.
+- Rules in FormRequests: uniques, quarter 1–4 + unique per year, section name unique
+  per year+level, adviser must be active faculty. Deletes blocked with 409 when in use.
+- Decisions: single active year enforced in code (others auto-deactivated);
+  per-record policies deferred to Phase 4 where faculty ownership checks appear.
+- Frontend: `/admin/*` pages (years, periods, levels, sections, rooms, subjects, users)
+  with real counts on the overview; 403/422 surfaced inline.

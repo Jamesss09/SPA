@@ -4,10 +4,13 @@ import { useAuth, type Role } from "../auth/AuthContext";
 const NAV: Record<Role, [string, string][]> = {
   admin: [
     ["/admin", "Overview"],
-    ["/admin?s=users", "Users"],
-    ["/admin?s=imports", "Imports"],
-    ["/admin?s=schedules", "Schedules"],
-    ["/admin?s=grades", "Grades"],
+    ["/admin/school-years", "Years"],
+    ["/admin/grading-periods", "Periods"],
+    ["/admin/grade-levels", "Levels"],
+    ["/admin/sections", "Sections"],
+    ["/admin/rooms", "Rooms"],
+    ["/admin/subjects", "Subjects"],
+    ["/admin/users", "Users"],
   ],
   faculty: [
     ["/faculty", "My classes"],

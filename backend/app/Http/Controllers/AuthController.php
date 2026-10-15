@@ -37,7 +37,9 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        $user = $request->user();
+        // Explicit web guard: the default guard may be stale (sanctum) when
+        // requests share an app instance (tests, Octane).
+        $user = Auth::guard('web')->user();
         if (! $user->isActive()) {
             // Explicit web guard: after auth:sanctum the default guard is
             // sanctum (RequestGuard), which has no logout() method.

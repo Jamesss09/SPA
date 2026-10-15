@@ -21,6 +21,8 @@ class User extends Authenticatable
 
     protected $hidden = ['password', 'remember_token'];
 
+    protected $attributes = ['status' => 'active', 'must_change_password' => false];
+
     protected function casts(): array
     {
         return [
